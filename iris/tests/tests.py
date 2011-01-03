@@ -24,10 +24,12 @@ class IrisTest(TestCase):
     """
 
     def setUp(self):
-        self.alice = User(username='alice')
-        self.alice.save()
-        self.bob = User(username='bob')
-        self.bob.save()
+        self.alice, created = User.objects.get_or_create(username='alice')
+        if created:
+            self.alice.save()
+        self.bob, created = User.objects.get_or_create(username='bob')
+        if created:
+            self.bob.save()
 
     def tearDown(self):
         del self.alice
