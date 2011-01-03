@@ -1,0 +1,7 @@
+{% with item.content.participant.content as new_participant %}
+    {% if new_participant == item.creator %}
+        {{ new_participant }} joined the topic
+    {% else %}
+        {{ item.creator }} added {{ new_participant }} to the topic
+    {% endif %}
+{% endwith %}

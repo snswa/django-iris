@@ -7,9 +7,15 @@
 
     <h1>{{ topic.subject }}</h1>
 
-    <ul>
-        {% for item in topic.items.all %}
-            <li>{{ item.created|timesince }} - {{ item }}</li>
-        {% endfor %}
-    </ul>
+    <p>Started {{ topic.created|timesince }} ago by {{ topic.creator }}</p>
+
+    {% for item in topic.items.all %}
+        <div>
+            <div>{{ item.created|timesince }} ago</div>
+            {% include item.view_template %}
+            {% if not forloop.last %}
+                <hr>
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endblock %}

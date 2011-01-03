@@ -100,6 +100,11 @@ class Item(models.Model):
         topic.modified = self.created
         topic.save()
 
+    def view_template(self):
+        """Return the name of the view template according to the content type."""
+        ct = self.content_type
+        return 'iris/items/{0}.{1}.view.html'.format(ct.app_label, ct.model)
+
 
 class Participant(models.Model):
     """A user or other object participating in a topic."""
