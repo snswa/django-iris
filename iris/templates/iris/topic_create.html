@@ -1,0 +1,17 @@
+{% extends "iris/base.html" %}
+
+{% block title %}Create topic - {{ block.super }}{% endblock %}
+
+{% block body %}
+
+    <p><a href="{% url iris_topics %}">« Topics</a></p>
+
+    <h1>Create topic</h1>
+
+    <form action="{% url iris_topic_create %}" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        {{ topic_create_form.as_table }}
+        <p><input type="submit" value="Create"></p>
+    </form>
+
+{% endblock %}

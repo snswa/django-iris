@@ -2,7 +2,9 @@ import datetime
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.core.urlresolvers import reverse
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -22,6 +24,12 @@ class Topic(models.Model):
 
     def __unicode__(self):
         return self.subject
+
+    def get_absolute_url(self):
+        return reverse('iris_topic_slug', kwargs=dict(
+            topic_id=self.id,
+            slug=slugify(self.subject),
+        ))
 
     def has_participant(self, content):
         content_type = ContentType.objects.get_for_model(content)

@@ -1,0 +1,23 @@
+{% extends "iris/base.html" %}
+
+{% block title %}Topics - {{ block.super }}{% endblock %}
+
+{% block body %}
+
+    <h1>Topics</h1>
+
+    <ul>
+        <li><a href="{% url iris_topic_create %}">Create a new topic</a></li>
+    </ul>
+
+    {% if topic_list %}
+        <ul>
+            {% for topic in topic_list %}
+                <li><a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No topics.</p>
+    {% endif %}
+
+{% endblock %}

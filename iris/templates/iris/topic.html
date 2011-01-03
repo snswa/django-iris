@@ -1,0 +1,15 @@
+{% extends "iris/base.html" %}
+
+{% block title %}{{ topic.subject }} - {{ block.super }}{% endblock %}
+
+{% block body %}
+    <p><a href="{% url iris_topics %}">« Topics</a></p>
+
+    <h1>{{ topic.subject }}</h1>
+
+    <ul>
+        {% for item in topic.items.all %}
+            <li>{{ item.created|timesince }} - {{ item }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
