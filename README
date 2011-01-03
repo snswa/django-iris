@@ -1,0 +1,31 @@
+Installation
+============
+
+In a virtualenv::
+
+    $ pip install -e git+https://github.com/snswa/django-iris.git@master#egg=django-iris
+
+From the root of your new django-iris repository clone::
+
+    $ pip install -r requirements.txt
+
+
+Running tests
+=============
+
+From the root of your django-iris repository clone::
+
+    $ iris/tests/manage.py test iris
+
+
+Running example project
+=======================
+
+From the root of your django-iris repository clone::
+
+    $ iris/example/manage.py syncdb --noinput
+    $ iris/example/manage.py runserver
+
+Now visit http://localhost:8000/.
+
+Users are "alice" and "bob" both with the password of "pw".
