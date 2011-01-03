@@ -1,16 +1,11 @@
 from django import forms
 
-from iris import api
+from iris.models import Topic
 
 
-class TopicCreateForm(forms.Form):
-    """Form to create a new iris topic."""
+class TopicForm(forms.ModelForm):
+    """Form for Topic"""
 
-    subject = forms.CharField()
-
-    def save(self, request):
-        topic = api.create_topic(
-            creator=request.user,
-            subject=self.cleaned_data['subject'],
-        )
-        return topic
+    class Meta:
+        model = Topic
+        fields = ('subject',)

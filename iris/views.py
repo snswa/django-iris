@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-from iris.forms import TopicCreateForm
+from iris.forms import TopicForm
 from iris.models import Topic
 
 
@@ -19,12 +19,15 @@ def topic(request, topic_id, slug=None, template_name="iris/topic.html", extra_c
 
 
 @login_required
-def topic_create(request, form_class=TopicCreateForm, template_name="iris/topic_create.html", extra_context=None, *args, **kwargs):
+def topic_create(request, form_class=TopicForm, template_name="iris/topic_create.html", extra_context=None, *args, **kwargs):
     extra_context = extra_context or {}
     if request.method == 'POST':
         topic_create_form = form_class(request.POST)
         if topic_create_form.is_valid():
-            topic = topic_create_form.save(request)
+            topic = topic_create_form.save(commit=False)
+            topic.creator = request.user
+            topic.save()
+            topic.add_participant(request.user, request.user)
             return HttpResponseRedirect(topic.get_absolute_url())
     else:
         topic_create_form = form_class()
