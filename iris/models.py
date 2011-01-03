@@ -31,14 +31,39 @@ class Topic(models.Model):
             slug=slugify(self.subject),
         ))
 
-    def has_participant(self, content):
-        content_type = ContentType.objects.get_for_model(content)
-        participants = Participant.objects.filter(
+    def add_participant(self, creator, content):
+        participant = Participant(
             topic=self,
-            content_type__pk=content_type.id,
-            object_id=content.id,
+            content=content,
+            last_read=self.created,
         )
-        return participants.count() == 1
+        participant.save()
+        joined = ParticipantJoined(
+            participant=participant,
+        )
+        joined.save()
+        item = Item(
+            topic=self,
+            creator=creator,
+            content=joined,
+        )
+        item.save()
+
+    def get_participant(self, content):
+        """Get participation information for the given content."""
+        content_type = ContentType.objects.get_for_model(content)
+        try:
+            return Participant.objects.get(
+                topic=self,
+                content_type__pk=content_type.id,
+                object_id=content.id,
+            )
+        except Participant.DoesNotExist:
+            return None
+
+    def has_participant(self, content):
+        participant = self.get_participant(content)
+        return participant is not None
 
     def last_read_by(self, content):
         content_type = ContentType.objects.get_for_model(content)
@@ -54,27 +79,27 @@ class Item(models.Model):
     """An item in a conversation."""
 
     topic = models.ForeignKey('Topic', related_name='items')
-    created = models.DateTimeField(default=datetime.datetime.now) # don't use auto_now_add since we sometimes want to override this on create
-    participant = models.ForeignKey('Participant', related_name='+')
 
-    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    content_type = models.ForeignKey(ContentType, blank=True, null=True, related_name='+')
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content = generic.GenericForeignKey("content_type", "object_id")
+
+    creator_content_type = models.ForeignKey(ContentType, blank=True, null=True, related_name='+')
+    creator_object_id = models.PositiveIntegerField(blank=True, null=True)
+    creator = generic.GenericForeignKey("creator_content_type", "creator_object_id")
+    created = models.DateTimeField(default=datetime.datetime.now) # don't use auto_now_add since we sometimes want to override this on create
 
     class Meta:
         ordering = ('created',)
 
     def __unicode__(self):
-        return u"{0}: {1}".format(self.participant, self.content)
+        return u"{0}: {1}".format(self.creator, self.content)
 
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)
         topic = self.topic
         topic.modified = self.created
         topic.save()
-        participant = self.participant
-        participant.last_read = self.created
-        participant.save()
 
 
 class Participant(models.Model):
