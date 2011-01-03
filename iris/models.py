@@ -13,7 +13,7 @@ class Topic(models.Model):
 
     subject = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(blank=True, null=True)
+    modified = models.DateTimeField(blank=True, null=True, db_index=True)
 
     creator_content_type = models.ForeignKey(ContentType, blank=True, null=True)
     creator_object_id = models.PositiveIntegerField(blank=True, null=True)
@@ -35,7 +35,6 @@ class Topic(models.Model):
         participant = Participant(
             topic=self,
             content=content,
-            last_read=self.created,
         )
         participant.save()
         joined = ParticipantJoined(
@@ -65,20 +64,21 @@ class Topic(models.Model):
         participant = self.get_participant(content)
         return participant is not None
 
-    def last_read_by(self, content):
+    def item_last_read_by(self, content):
         content_type = ContentType.objects.get_for_model(content)
         participant = Participant.objects.get(
             topic=self,
             content_type__pk=content_type.id,
             object_id=content.id,
         )
-        return participant.last_read
+        return participant.item_last_read
 
 
 class Item(models.Model):
     """An item in a conversation."""
 
-    topic = models.ForeignKey('Topic', related_name='items')
+    topic = models.ForeignKey('Topic', related_name='items', db_index=True)
+    created = models.DateTimeField(default=datetime.datetime.now, db_index=True) # don't use auto_now_add since we sometimes want to override this on create
 
     content_type = models.ForeignKey(ContentType, blank=True, null=True, related_name='+')
     object_id = models.PositiveIntegerField(blank=True, null=True)
@@ -87,7 +87,6 @@ class Item(models.Model):
     creator_content_type = models.ForeignKey(ContentType, blank=True, null=True, related_name='+')
     creator_object_id = models.PositiveIntegerField(blank=True, null=True)
     creator = generic.GenericForeignKey("creator_content_type", "creator_object_id")
-    created = models.DateTimeField(default=datetime.datetime.now) # don't use auto_now_add since we sometimes want to override this on create
 
     class Meta:
         ordering = ('created',)
@@ -111,7 +110,7 @@ class Participant(models.Model):
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content = generic.GenericForeignKey("content_type", "object_id")
 
-    last_read = models.DateTimeField(blank=True, null=True)
+    item_last_read = models.ForeignKey(Item, blank=True, null=True)
 
     class Meta:
         pass

@@ -52,7 +52,7 @@ class IrisTest(TestCase):
         assert topic.has_participant(self.alice)
         assert not topic.has_participant(self.bob)
         #
-        assert topic.last_read_by(self.alice) == topic.created
+        assert topic.item_last_read_by(self.alice) == None
         #
         # - alice is in the participant list for this topic
         assert self.alice in map(attrgetter('content'), topic.participants.all())
@@ -91,4 +91,4 @@ class IrisTest(TestCase):
         assert topic.has_participant(self.alice)
         assert topic.has_participant(self.bob)
         #
-        assert topic.last_read_by(self.bob) == topic.created
+        assert topic.item_last_read_by(self.bob) == None
