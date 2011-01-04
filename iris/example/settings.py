@@ -67,6 +67,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
+if DEBUG:
+    MIDDLEWARE_CLASSES += (
+        'iris.example.middleware.OverrideUserMiddleware',
+    )
+
 ROOT_URLCONF = 'iris.example.urls'
 
 TEMPLATE_DIRS = (

@@ -3,6 +3,16 @@
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8">
         <title>{% block title %}Iris Example Site{% endblock %}</title>
+        <style type="text/css" media="screen">
+            div.override-user {
+                background-color: black;
+                color: yellow;
+                font-size: larger;
+                font-weight: bold;
+                padding: .5em;
+                text-align: center;
+            }
+        </style>
     </head>
     <body>
         {% block body %}
