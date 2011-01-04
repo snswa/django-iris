@@ -9,7 +9,7 @@
 
     <p>Started {{ topic.created|timesince }} ago by {{ topic.creator }}</p>
 
-    {% for item in topic.items.all %}
+    {% for item in topic.items.reverse %}
         <div>
             <div>{{ item.created|timesince }} ago</div>
             {% include item.view_template %}
