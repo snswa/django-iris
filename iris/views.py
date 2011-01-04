@@ -42,9 +42,19 @@ def topic_create(request, form_class=TopicForm, template_name="iris/topic_create
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
+def topic_join(request, topic_id, *args, **kwargs):
+    topic = get_object_or_404(Topic, pk=topic_id)
+    if request.method == 'POST':
+        if not request.user.has_perm('iris.join_topic', topic):
+            raise PermissionDenied()
+        if not topic.has_participant(request.user):
+            topic.add_participant(request.user, request.user)
+    return redirect(topic)
+
+
 def topics(request, template_name="iris/topics.html", extra_context=None, *args, **kwargs):
     extra_context = extra_context or {}
-    topic_list = Topic.objects.order_by('-modified')
+    topic_list = Topic.objects.order_by('modified')
     template_context = dict(
         extra_context,
         topic_list=topic_list,

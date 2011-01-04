@@ -28,3 +28,16 @@ def canjointopic(user, topic):
         {% endif %}
     """
     return user.has_perm('iris.join_topic', obj=topic)
+
+
+@register.filter
+def hasjoinedtopic(user, topic):
+    """Return True if the user participates in the topic.
+
+    Example::
+
+        {% if user|hasjoinedtopic:topic %}
+            <a href="...">Leave topic</a>
+        {% endif %}
+    """
+    return topic.has_participant(user)

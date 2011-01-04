@@ -1,5 +1,7 @@
 {% extends "iris/base.html" %}
 
+{% load iris_tags %}
+
 {% block title %}{{ topic.subject }} - {{ block.super }}{% endblock %}
 
 {% block body %}
@@ -8,6 +10,22 @@
     <h1>{{ topic.subject }}</h1>
 
     <p>Started {{ topic.created|timesince }} ago by {{ topic.creator }}</p>
+
+    <h2>Participants</h2>
+
+    <ul>
+        {% for participant in topic.participants.all %}
+            <li>{{ participant.content }}</li>
+        {% endfor %}
+        {% if user|canjointopic:topic and not user|hasjoinedtopic:topic %}
+            <li>
+                <form action="{% url iris_topic_join topic_id=topic.id %}" method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    <input type="submit" value="Join">
+                </form>
+            </li>
+        {% endif %}
+    </ul>
 
     {% for item in topic.items.reverse %}
         <div>
