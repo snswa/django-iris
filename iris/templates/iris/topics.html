@@ -16,7 +16,7 @@
 
     {% if topic_list %}
         <ul>
-            {% for topic in topic_list %}
+            {% for topic in topic_list.reverse %}
                 {% if user|canviewtopic:topic %}
                     <li><a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a></li>
                 {% else %}
