@@ -20,6 +20,7 @@ class Topic(models.Model):
     creator = generic.GenericForeignKey("creator_content_type", "creator_object_id")
 
     class Meta:
+        ordering = ('modified', )
         permissions = (
             ('view_topic', 'Can view topic(s).'),
             ('join_topic', 'Can participate in topic(s).'),
