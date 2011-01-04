@@ -23,19 +23,24 @@ class OverrideUserMiddleware(object):
         if override_user:
             if response.status_code == 200:
                 doc = pq(response.content, parser='html')
+                # Replace hrefs in 'a' tags.
                 for a in doc('a'):
                     href = a.attrib.get('href')
                     if href and '://' not in href:
                         delim = '&' if '?' in href else '?'
                         a.attrib['href'] = '{0}{1}u={2}'.format(href, delim, override_user)
+                # Replace actions in 'form' tags.
                 for form in doc('form'):
                     action = form.attrib.get('action')
                     if action and '://' not in action:
                         delim = '&' if '?' in action else '?'
                         form.attrib['action'] = '{0}{1}u={2}'.format(action, delim, override_user)
-                # Add a header
+                # Add a header.
                 header = pq('<div class="override-user"></div>').text(override_user)
                 header.prependTo(doc('html'))
+                # Add a title.
+                title = doc('title')
+                title.text('[{0}] {1}'.format(override_user, title.text()))
                 response.content = '<!DOCTYPE html>' + doc.__html__()
             elif response.status_code == 302:
                 location = response['Location']
