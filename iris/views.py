@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import HttpResponseForbidden, Http404
+from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -28,7 +28,7 @@ def topic_create(request, form_class=TopicForm, template_name="iris/topic_create
             topic.creator = request.user
             topic.save()
             topic.add_participant(request.user, request.user)
-            return HttpResponseRedirect(topic.get_absolute_url())
+            return redirect(topic)
     else:
         topic_create_form = form_class()
     template_context = dict(
