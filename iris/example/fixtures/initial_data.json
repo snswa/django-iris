@@ -34,5 +34,41 @@
       "email": "bob@example.com",
       "date_joined": "2011-01-02 18:20:54"
     }
+  },
+  {
+    "pk": 3,
+    "model": "auth.user",
+    "fields": {
+      "username": "clara",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2011-01-02 18:17:54",
+      "groups": [],
+      "user_permissions": [],
+      "password": "$$",
+      "email": "carla@example.com",
+      "date_joined": "2011-01-02 18:17:54"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "auth.user",
+    "fields": {
+      "username": "doug",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2011-01-02 18:14:54",
+      "groups": [],
+      "user_permissions": [],
+      "password": "$$",
+      "email": "doug@example.com",
+      "date_joined": "2011-01-02 18:14:54"
+    }
   }
 ]
