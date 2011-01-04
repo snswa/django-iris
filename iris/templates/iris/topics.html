@@ -1,5 +1,7 @@
 {% extends "iris/base.html" %}
 
+{% load iris_tags %}
+
 {% block title %}Topics - {{ block.super }}{% endblock %}
 
 {% block body %}
@@ -7,13 +9,19 @@
     <h1>Topics</h1>
 
     <ul>
-        <li><a href="{% url iris_topic_create %}">Create a new topic</a></li>
+        {% if perms.iris.add_topic %}
+            <li><a href="{% url iris_topic_create %}">Create a new topic</a></li>
+        {% endif %}
     </ul>
 
     {% if topic_list %}
         <ul>
             {% for topic in topic_list %}
-                <li><a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a></li>
+                {% if user|canviewtopic:topic %}
+                    <li><a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a></li>
+                {% else %}
+                    <li>(restricted)</li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% else %}

@@ -20,7 +20,10 @@ class Topic(models.Model):
     creator = generic.GenericForeignKey("creator_content_type", "creator_object_id")
 
     class Meta:
-        pass
+        permissions = (
+            ('view_topic', 'Can view topic(s).'),
+            ('join_topic', 'Can participate in topic(s).'),
+        )
 
     def __unicode__(self):
         return self.subject

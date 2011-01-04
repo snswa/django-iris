@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
@@ -11,6 +12,8 @@ from iris.models import Topic
 def topic(request, topic_id, slug=None, template_name="iris/topic.html", extra_context=None, *args, **kwargs):
     extra_context = extra_context or {}
     topic = get_object_or_404(Topic, pk=topic_id)
+    if not request.user.has_perm('iris.view_topic', topic):
+        raise PermissionDenied()
     template_context = dict(
         extra_context,
         topic=topic,
@@ -18,8 +21,9 @@ def topic(request, topic_id, slug=None, template_name="iris/topic.html", extra_c
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
-@login_required
 def topic_create(request, form_class=TopicForm, template_name="iris/topic_create.html", extra_context=None, *args, **kwargs):
+    if not request.user.has_perm('iris.add_topic'):
+        raise PermissionDenied()
     extra_context = extra_context or {}
     if request.method == 'POST':
         topic_create_form = form_class(request.POST)
