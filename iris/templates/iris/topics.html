@@ -1,12 +1,13 @@
 {% extends "iris/base.html" %}
 
+{% load i18n %}
 {% load iris_tags %}
 
-{% block title %}Topics - {{ block.super }}{% endblock %}
+{% block title %}{% trans "Topics" %} - {{ block.super }}{% endblock %}
 
 {% block body %}
 
-    <h1>Topics</h1>
+    <h1>{% trans "Topics" %}</h1>
 
     <ul>
         {% if perms.iris.add_topic %}
@@ -20,12 +21,12 @@
                 {% if user|canviewtopic:topic %}
                     <li><a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a></li>
                 {% else %}
-                    <li>(restricted)</li>
+                    <li>{% trans "(restricted)" %}</li>
                 {% endif %}
             {% endfor %}
         </ul>
     {% else %}
-        <p>No topics.</p>
+        <p>{% trans "No topics." %}</p>
     {% endif %}
 
 {% endblock %}

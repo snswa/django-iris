@@ -1,17 +1,22 @@
 {% extends "iris/base.html" %}
 
+{% load i18n %}
 {% load iris_tags %}
 
 {% block title %}{{ topic.subject }} - {{ block.super }}{% endblock %}
 
 {% block body %}
-    <p><a href="{% url iris_topics %}">« Topics</a></p>
+    <p><a href="{% url iris_topics %}">&larr; Topics</a></p>
 
     <h1>{{ topic.subject }}</h1>
 
-    <p>Started {{ topic.created|timesince }} ago by {{ topic.creator }}</p>
+    <p>
+        {% blocktrans with topic.created|timesince as timesince and topic.creator as creator %}
+            Started {{ timesince }} ago by {{ creator }}
+        {% endblocktrans %}
+    </p>
 
-    <h2>Participants</h2>
+    <h2>{% trans "Participants" %}</h2>
 
     <ul>
         {% for participant in topic.participants.all %}
@@ -21,7 +26,7 @@
             <li>
                 <form action="{% url iris_topic_join topic_id=topic.id %}" method="post" accept-charset="utf-8">
                     {% csrf_token %}
-                    <input type="submit" value="Join">
+                    <input type="submit" value="{% trans 'Join' %}">
                 </form>
             </li>
         {% endif %}

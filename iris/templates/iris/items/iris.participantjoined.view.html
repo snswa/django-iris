@@ -1,7 +1,12 @@
+{% load i18n %}
 {% with item.content.participant.content as new_participant %}
     {% if new_participant == item.creator %}
-        {{ new_participant }} joined the topic
+        {% blocktrans %}
+            {{ new_participant }} joined the topic
+        {% endblocktrans %}
     {% else %}
-        {{ item.creator }} added {{ new_participant }} to the topic
+        {% blocktrans %}
+            {{ item.creator }} added {{ new_participant }} to the topic
+        {% endblocktrans %}
     {% endif %}
 {% endwith %}
