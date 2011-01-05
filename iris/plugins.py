@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 
 
-class BaseItemTypePlugin(object):
+class ItemTypePlugin(object):
 
     label = None
     name = None
@@ -39,7 +39,7 @@ class ParticipantAddUserForm(forms.Form):
             )
 
 
-class ParticipantAddUserPlugin(BaseItemTypePlugin):
+class ParticipantAddUserPlugin(ItemTypePlugin):
 
     label = u'participant'
     name = 'iris.participantjoin.add.user'

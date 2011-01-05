@@ -87,6 +87,8 @@ AUTHENTICATION_BACKENDS = (
 
 IRIS_ITEM_TYPE_PLUGINS = (
     'iris.plugins.ParticipantAddUserPlugin',
+    'iris.example.plugins.OneLinerAddPlugin',
+    'iris.example.plugins.NoteAddPlugin',
 )
 
 INSTALLED_APPS = (

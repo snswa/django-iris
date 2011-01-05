@@ -49,6 +49,16 @@ class Topic(models.Model):
             slug=slugify(self.subject),
         ))
 
+    def add_item(self, creator, obj):
+        """Add the object as an item, returning a saved item."""
+        item = Item(
+            topic=self,
+            creator=creator,
+            content=obj,
+        )
+        item.save()
+        return item
+
     def add_participant(self, creator, obj):
         """Add the object as a participant, returning the ParticipantJoin item created."""
         participant = Participant(
@@ -60,13 +70,7 @@ class Topic(models.Model):
             participant=participant,
         )
         joined.save()
-        item = Item(
-            topic=self,
-            creator=creator,
-            content=joined,
-        )
-        item.save()
-        return item
+        return self.add_item(creator, joined)
 
     def get_participant(self, obj):
         """Get participation information for the given object."""
