@@ -2,20 +2,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django import forms
 
-
-class ItemTypePlugin(object):
-
-    label = None
-    name = None
-    form_class = None
-
-    @classmethod
-    def css_class(cls):
-        return cls.name.replace('.', '-')
-
-    @classmethod
-    def add_template(cls):
-        return 'iris/items/{0}.html'.format(cls.name)
+from iris.base import ItemTypePlugin
 
 
 class ParticipantAddUserForm(forms.Form):
