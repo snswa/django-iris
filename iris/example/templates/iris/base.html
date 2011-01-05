@@ -45,8 +45,24 @@
             .topic .item .items-after {
                 display: none;
             }
+            .topic .item-type .form {
+                display: none;
+            }
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(function () {
+                $('.topic .item-type .label a').click(function (event) {
+                    var $form = $(event.target).parents('.item-type').find('.form');
+                    if ($form.find(':visible').length > 0) {
+                        $form.slideUp('fast');
+                    } else {
+                        $form.slideDown('fast');
+                    }
+                    return false;
+                });
+            });
+        </script>
         {% block extrahead %}
         {% endblock %}
     </head>
