@@ -52,11 +52,13 @@ def topic_join(request, topic_id, *args, **kwargs):
     return redirect(topic)
 
 
-def topics(request, template_name="iris/topics.html", extra_context=None, *args, **kwargs):
+def topics(request, template_name="iris/topics.html", form_class=TopicForm, extra_context=None, *args, **kwargs):
     extra_context = extra_context or {}
     topic_list = Topic.objects.order_by('modified')
+    topic_create_form = form_class()
     template_context = dict(
         extra_context,
         topic_list=topic_list,
+        topic_create_form=topic_create_form,
     )
     return render_to_response(template_name, template_context, RequestContext(request))

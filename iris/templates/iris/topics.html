@@ -9,17 +9,32 @@
 
     <h1>{% trans "Topics" %}</h1>
 
-    <ul>
-        {% if perms.iris.add_topic %}
-            <li><a href="{% url iris_topic_create %}">Create a new topic</a></li>
-        {% endif %}
-    </ul>
+    {% if perms.iris.add_topic %}
+
+        <h2>{% trans "Create topic" %}</h1>
+
+        <form action="{% url iris_topic_create %}" method="post" accept-charset="utf-8">
+            {% csrf_token %}
+            <table>
+                {{ topic_create_form.as_table }}
+            </table>
+            <p><input type="submit" value="{% trans 'Create' %} &rarr;"></p>
+        </form>
+
+    {% endif %}
+
+    <h2>{% trans "Latest topics" %}</h2>
 
     {% if topic_list %}
         <ul>
             {% for topic in topic_list.reverse %}
                 {% if user|canviewtopic:topic %}
-                    <li><a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a></li>
+                    <li>
+                        <a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a>
+                        {% blocktrans with topic.modified|timesince as modified %}
+                            ({{ modified }} ago)
+                        {% endblocktrans %}
+                    </li>
                 {% else %}
                     <li>{% trans "(restricted)" %}</li>
                 {% endif %}
