@@ -100,6 +100,10 @@ class Item(models.Model):
     def __unicode__(self):
         return u"{0}: {1}".format(self.creator, self.content)
 
+    def get_absolute_url(self):
+        """Return the topic's absolute url with a query string and hash for this item."""
+        return '{0}?i={1}#i{1}'.format(self.topic.get_absolute_url(), self.id)
+
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)
         topic = self.topic
