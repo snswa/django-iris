@@ -32,25 +32,31 @@ class OverrideUserMiddleware(object):
                     if hashbits:
                         url = '{0}#{1}'.format(url, hashbits[0])
                 return url
-            if response.status_code == 200:
-                doc = pq(response.content, parser='html')
-                # Replace hrefs in 'a' tags.
-                for a in doc('a'):
-                    url = a.attrib.get('href')
-                    if url:
-                        a.attrib['href'] = rewrite_url(url)
-                # Replace actions in 'form' tags.
-                for form in doc('form'):
-                    url = form.attrib.get('action')
-                    if url:
-                        form.attrib['action'] = rewrite_url(url)
-                # Add a header.
-                header = pq('<div class="override-user"></div>').text(override_user)
-                header.prependTo(doc('html'))
-                # Add a title.
-                title = doc('title')
-                title.text('[{0}] {1}'.format(override_user, title.text()))
-                response.content = '<!DOCTYPE html>' + doc.__html__()
+            if response.status_code == 200 and response['Content-type'].startswith('text/html'):
+                try:
+                    doc = pq(response.content, parser='html')
+                except ValueError:
+                    pass
+                else:
+                    # Replace hrefs in 'a' tags.
+                    for a in doc('a'):
+                        url = a.attrib.get('href')
+                        if url:
+                            a.attrib['href'] = rewrite_url(url)
+                    # Replace actions in 'form' tags.
+                    for form in doc('form'):
+                        url = form.attrib.get('action')
+                        if url:
+                            form.attrib['action'] = rewrite_url(url)
+                    # Add a header.
+                    header = pq('<div class="override-user"></div>').text(override_user)
+                    header.prependTo(doc('body'))
+                    # Add a title.
+                    title = doc('title')
+                    title.text('[{0}] {1}'.format(override_user, title.text()))
+                    response.content = doc.__html__()
+                    if response.content.startswith('<html'):
+                        response.content = '<!DOCTYPE html>' + response.content
             elif response.status_code == 302:
                 response['Location'] = rewrite_url(response['Location'], always=True)
         return response
