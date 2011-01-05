@@ -1,12 +1,30 @@
 {% load i18n %}
 {% with item.content.participant.content as new_participant %}
     {% if new_participant == item.creator %}
-        {% blocktrans %}
-            {{ new_participant }} joined the topic
-        {% endblocktrans %}
+        {% with new_participant.get_absolute_url as url %}
+            {% if url %}
+                <a href="{{ url }}">{{ new_participant }}</a>
+            {% else %}
+                {{ new_participant }}
+            {% endif %}
+        {% endwith %}
+        {% trans "joined the topic" %}
     {% else %}
-        {% blocktrans %}
-            {{ item.creator }} added {{ new_participant }} to the topic
-        {% endblocktrans %}
+        {% with new_participant.get_absolute_url as n_url %}
+        {% with item.creator.get_absolute_url as c_url %}
+            {% if c_url %}
+                <a href="{{ c_url }}">{{ item.creator }}</a>
+            {% else %}
+                {{ item.creator }}
+            {% endif %}
+            {% trans "added" %}
+            {% if n_url %}
+                <a href="{{ n_url }}">{{ new_participant }}</a>
+            {% else %}
+                {{ new_participant }}
+            {% endif %}
+            {% trans "to the topic" %}
+        {% endwith %}
+        {% endwith %}
     {% endif %}
 {% endwith %}

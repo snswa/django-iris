@@ -5,40 +5,83 @@
 
 {% block title %}{{ topic.subject }} - {{ block.super }}{% endblock %}
 
+{% block body_class %}topic {{ block.super }}{% endblock %}
+
 {% block body %}
     <p><a href="{% url iris_topics %}">&larr; Topics</a></p>
 
-    <h1>{{ topic.subject }}</h1>
-
-    <p>
-        {% blocktrans with topic.created|timesince as timesince and topic.creator as creator %}
-            Started {{ timesince }} ago by {{ creator }}
+    <h1>
+        {% blocktrans with topic.subject as subject %}
+            Topic: {{ subject }}
         {% endblocktrans %}
-    </p>
+    </h1>
 
-    <h2>{% trans "Participants" %}</h2>
-
-    <ul>
-        {% for participant in topic.participants.all %}
-            <li>{{ participant.content }}</li>
-        {% endfor %}
-        {% if user|canjointopic:topic and not user|hasjoinedtopic:topic %}
+    <div id="metadata">
+        <ul>
             <li>
-                <form action="{% url iris_topic_join topic_id=topic.id %}" method="post" accept-charset="utf-8">
-                    {% csrf_token %}
-                    <input type="submit" value="{% trans 'Join' %}">
-                </form>
+                {% trans "Started" %}
+                {{ topic.created|timesince }}
+                {% trans "ago by" %}
+                {% with topic.creator.get_absolute_url as url %}
+                    {% if url %}
+                        <a href="{{ url }}">{{ topic.creator }}</a>
+                    {% else %}
+                        {{ topic.creator }}
+                    {% endif %}
+                {% endwith %}
             </li>
-        {% endif %}
-    </ul>
+            <li>
+                {% blocktrans with topic.modified|timesince as modified %}
+                    Last active {{ modified }} ago
+                {% endblocktrans %}
+            </li>
+        </ul>
+    </div>
 
-    {% for item in topic.items.reverse %}
-        <div>
-            <div>{{ item.created|timesince }} ago</div>
-            {% include item.view_template %}
-            {% if not forloop.last %}
-                <hr>
+    <div id="participants">
+        <h2>{% trans "Participants" %}</h2>
+
+        <ul>
+            {% for participant in topic.participants.all %}
+                <li>
+                    {% with participant.content as content %}
+                        {% with content.get_absolute_url as url  %}
+                            {% if url %}
+                                <a href="{{ url }}">{{ content }}</a>
+                            {% else %}
+                                {{ content }}
+                            {% endif %}
+                        {% endwith %}
+                    {% endwith %}
+                </li>
+            {% endfor %}
+            {% if user|canjointopic:topic and not user|hasjoinedtopic:topic %}
+                <li>
+                    <form action="{% url iris_topic_join topic_id=topic.id %}" method="post" accept-charset="utf-8">
+                        {% csrf_token %}
+                        <input type="submit" value="{% trans 'Join' %}">
+                    </form>
+                </li>
             {% endif %}
-        </div>
-    {% endfor %}
+        </ul>
+    </div>
+
+    <div id="items">
+        <h2>{% trans "Activity" %}</h2>
+        <ul>
+            {% for item in topic.items.reverse %}
+                <li id="i{{ item.id }}" class="item">
+                    <a name="i{{ item.id }}"></a>
+                    <div class="timestamp">
+                        {% blocktrans with item.created|timesince as created %}
+                            {{ created }} ago
+                        {% endblocktrans %}
+                    </div>
+                    <div class="read view {{ item.css_class }}">
+                        {% include item.view_template %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

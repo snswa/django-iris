@@ -12,9 +12,40 @@
                 padding: .5em;
                 text-align: center;
             }
+            .topic #participants {
+                float: right;
+                width: 30%;
+            }
+            .topic #participants h2 {
+                margin-top: 0;
+            }
+            .topic #items {
+                width: 68%;
+            }
+            .topic #items > ul {
+                list-style: none;
+                padding-left: 0;
+            }
+            .topic .item {
+                position: relative;
+                border-style: solid;
+                border-color: lightgrey;
+                border-width: 1px 1px 3px 1px;
+                margin-bottom: 2.5em;
+                padding: .5em;
+            }
+            .topic .item .read.view {
+                border
+            }
+            .topic .item .timestamp {
+                position: absolute;
+                bottom: -1.5em;
+                color: lightgrey;
+            }
         </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     </head>
-    <body>
+    <body class="{% block body_class %}{% endblock %}">
         {% block body %}
         {% endblock %}
     </body>

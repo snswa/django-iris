@@ -104,6 +104,11 @@ class Item(models.Model):
         topic.modified = self.created
         topic.save()
 
+    def css_class(self):
+        """Return a CSS class corresponding to this item's content type."""
+        ct = self.content_type
+        return '{0}-{1}'.format(ct.app_label, ct.model)
+
     def view_template(self):
         """Return the name of the view template according to the content type."""
         ct = self.content_type
