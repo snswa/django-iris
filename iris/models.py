@@ -85,6 +85,8 @@ class Topic(models.Model):
             return None
 
     def has_participant(self, obj):
+        if not isinstance(obj, models.Model):
+            return False
         participant = self.get_participant(obj)
         return participant is not None
 
