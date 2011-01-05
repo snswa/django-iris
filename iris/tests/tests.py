@@ -3,7 +3,7 @@ from operator import attrgetter
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from iris.models import ParticipantJoined, Topic
+from iris.models import ParticipantJoin, Topic
 
 
 class IrisTest(TestCase):
@@ -43,7 +43,7 @@ class IrisTest(TestCase):
         assert topic.items.count() == 1
         first_item = topic.items.all()[0]
         assert first_item.creator == self.alice
-        assert isinstance(first_item.content, ParticipantJoined)
+        assert isinstance(first_item.content, ParticipantJoin)
         assert unicode(first_item) == u'alice: alice joined'
         #
         assert topic.created != first_item.created
@@ -83,7 +83,7 @@ class IrisTest(TestCase):
         assert topic.items.count() == 2
         latest_item = topic.items.latest('created')
         assert latest_item.creator == self.alice
-        assert isinstance(latest_item.content, ParticipantJoined)
+        assert isinstance(latest_item.content, ParticipantJoin)
         assert unicode(latest_item) == u'alice: bob joined'
         #
         assert topic.modified == latest_item.created

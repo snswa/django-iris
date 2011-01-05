@@ -36,13 +36,13 @@ class Topic(models.Model):
         ))
 
     def add_participant(self, creator, obj):
-        """Add the object as a participant, returning the ParticipantJoined item created."""
+        """Add the object as a participant, returning the ParticipantJoin item created."""
         participant = Participant(
             topic=self,
             content=obj,
         )
         participant.save()
-        joined = ParticipantJoined(
+        joined = ParticipantJoin(
             participant=participant,
         )
         joined.save()
@@ -139,7 +139,7 @@ class Participant(models.Model):
         return unicode(self.content)
 
 
-class ParticipantJoined(models.Model):
+class ParticipantJoin(models.Model):
     """Information about someone joining a conversation."""
 
     participant = models.ForeignKey('Participant', related_name='+')
