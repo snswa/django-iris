@@ -17,71 +17,18 @@
     </h1>
 
     <div id="metadata">
-        <ul>
-            <li>
-                {% trans "Started" %}
-                {{ topic.created|timesince }}
-                {% trans "ago by" %}
-                {% with topic.creator.get_absolute_url as url %}
-                    {% if url %}
-                        <a href="{{ url }}">{{ topic.creator }}</a>
-                    {% else %}
-                        {{ topic.creator }}
-                    {% endif %}
-                {% endwith %}
-            </li>
-            <li>
-                {% blocktrans with topic.modified|timesince as modified %}
-                    Last active {{ modified }} ago
-                {% endblocktrans %}
-            </li>
-        </ul>
+        {% include "iris/topic_metadata.html" %}
     </div>
 
     <div id="participants">
         <h2>{% trans "Participants" %}</h2>
 
-        <ul>
-            {% for participant in topic.participants.all %}
-                <li>
-                    {% with participant.content as content %}
-                        {% with content.get_absolute_url as url  %}
-                            {% if url %}
-                                <a href="{{ url }}">{{ content }}</a>
-                            {% else %}
-                                {{ content }}
-                            {% endif %}
-                        {% endwith %}
-                    {% endwith %}
-                </li>
-            {% endfor %}
-            {% if user|canjointopic:topic and not user|hasjoinedtopic:topic %}
-                <li>
-                    <form action="{% url iris_topic_join topic_id=topic.id %}" method="post" accept-charset="utf-8">
-                        {% csrf_token %}
-                        <input type="submit" value="{% trans 'Join' %}">
-                    </form>
-                </li>
-            {% endif %}
-        </ul>
+        {% include "iris/topic_participant_list.html" %}
     </div>
 
     <div id="items">
         <h2>{% trans "Activity" %}</h2>
-        <ul>
-            {% for item in topic.items.reverse %}
-                <li id="i{{ item.id }}" class="item">
-                    <a name="i{{ item.id }}"></a>
-                    <div class="timestamp">
-                        {% blocktrans with item.created|timesince as created %}
-                            {{ created }} ago
-                        {% endblocktrans %}
-                    </div>
-                    <div class="read view {{ item.css_class }}">
-                        {% include item.view_template %}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
+
+        {% include "iris/topic_item_list.html" %}
     </div>
 {% endblock %}
