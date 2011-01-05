@@ -44,12 +44,13 @@ def topic_create(request, form_class=TopicForm, template_name="iris/topic_create
 
 def topic_join(request, topic_id, *args, **kwargs):
     topic = get_object_or_404(Topic, pk=topic_id)
+    destination = topic
     if request.method == 'POST':
         if not request.user.has_perm('iris.join_topic', topic):
             raise PermissionDenied()
         if not topic.has_participant(request.user):
-            topic.add_participant(request.user, request.user)
-    return redirect(topic)
+            destination = topic.add_participant(request.user, request.user)
+    return redirect(destination)
 
 
 def topics(request, template_name="iris/topics.html", form_class=TopicForm, extra_context=None, *args, **kwargs):
