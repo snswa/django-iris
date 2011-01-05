@@ -7,13 +7,13 @@ class ItemTypePlugin(object):
     name = None
     form_class = None
 
-    @classmethod
-    def css_class(cls):
-        return cls.name.replace('.', '-')
+    @property
+    def css_class(self):
+        return self.name.replace('.', '-')
 
-    @classmethod
-    def add_template(cls):
-        return 'iris/items/{0}.html'.format(cls.name)
+    @property
+    def add_template(self):
+        return 'iris/items/{0}.html'.format(self.name)
 
 
 class ModelPluginForm(forms.ModelForm):
