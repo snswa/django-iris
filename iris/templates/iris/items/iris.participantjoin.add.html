@@ -1,7 +1,0 @@
-<form action="{% url iris_item_add topic_id=topic.id app_label='iris' model='participantjoin' %}" method="post" accept-charset="utf-8">
-    {% csrf_token %}
-    <table>
-        {{ item_type.item_add_form.as_table }}
-    </table>
-    <input type="submit" value="Add to topic">
-</form>
