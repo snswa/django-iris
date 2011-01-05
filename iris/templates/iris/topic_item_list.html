@@ -1,16 +1,7 @@
-{% load i18n %}
 <ul>
     {% for item in topic.items.reverse %}
-        <li id="i{{ item.id }}" class="item">
-            <a name="i{{ item.id }}"></a>
-            <div class="timestamp">
-                {% blocktrans with item.created|timesince as created %}
-                    {{ created }} ago
-                {% endblocktrans %}
-            </div>
-            <div class="read view {{ item.css_class }}">
-                {% include item.view_template %}
-            </div>
+        <li>
+            {% include "iris/topic_item.html" %}
         </li>
     {% endfor %}
 </ul>

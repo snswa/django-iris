@@ -8,7 +8,7 @@
 {% block body_class %}topic {{ block.super }}{% endblock %}
 
 {% block body %}
-    <p><a href="{% url iris_topics %}">&larr; Topics</a></p>
+    <p><a href="{% url iris_topics %}">&larr; {% trans "Topics" %}</a></p>
 
     <h1>
         {% blocktrans with topic.subject as subject %}
@@ -25,6 +25,12 @@
 
         {% include "iris/topic_participant_list.html" %}
     </div>
+
+    {% if user|hasjoinedtopic:topic %}
+        <div id="item-add-forms">
+            {% include "iris/topic_item_add_list.html" %}
+        </div>
+    {% endif %}
 
     <div id="items">
         <h2>{% trans "Activity" %}</h2>

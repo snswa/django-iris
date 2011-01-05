@@ -1,0 +1,18 @@
+{# See iris.models.get_item_type_list for structure of item_type_list #}
+{% load i18n %}
+<ul>
+    {% for item_type in item_type_list %}
+        <li class="item-type {{ item_type.css_class }}">
+            <div class="label">{% spaceless %}
+                <a href="">
+                    {% blocktrans with item_type.model_class.item_type_label as label %}
+                        Add a {{ label }}
+                    {% endblocktrans %}
+                </a>
+            {% endspaceless %}</div>
+            <div class="form">
+                {% include item_type.add_template %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>

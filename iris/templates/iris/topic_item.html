@@ -1,0 +1,13 @@
+{% load i18n %}
+<div id="i{{ item.id }}" class="item">
+    <a name="i{{ item.id }}"></a>
+    <a class="items-after" href="{{ item.get_items_after_url }}"></a>
+    <div class="timestamp">
+        {% blocktrans with item.created|timesince as created %}
+            {{ created }} ago
+        {% endblocktrans %}
+    </div>
+    <div class="read view {{ item.css_class }}">
+        {% include item.view_template %}
+    </div>
+</div>

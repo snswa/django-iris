@@ -85,6 +85,10 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+IRIS_ADD_ITEM_TYPE_ORDER = (
+    'iris.participantjoin',
+)
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',

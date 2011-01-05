@@ -42,8 +42,13 @@
                 bottom: -1.5em;
                 color: lightgrey;
             }
+            .topic .item .items-after {
+                display: none;
+            }
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        {% block extrahead %}
+        {% endblock %}
     </head>
     <body class="{% block body_class %}{% endblock %}">
         {% block body %}

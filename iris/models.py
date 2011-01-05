@@ -7,6 +7,39 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from iris.conf import settings
+
+
+def get_item_type_info(item_type_name, form_kwargs=None):
+    if isinstance(item_type_name, ContentType):
+        content_type = item_type_name
+        app_label, model = content_type.app_label, content_type.model
+    else:
+        app_label, model = item_type_name.split('.')
+        content_type = ContentType.objects.get(app_label=app_label, model=model)
+    model_class = content_type.model_class()
+    css_class = '{0}-{1}'.format(app_label, model)
+    add_template = 'iris/items/{0}.{1}.add.html'.format(app_label, model)
+    return dict(
+        css_class=css_class,
+        model_class=model_class,
+        add_template=add_template,
+        item_add_form=model_class.item_add_form_class()(form_kwargs),
+    )
+
+def get_item_type_list(form_kwargs=None):
+    """Create a list of dictionaries for listed item types, each with these key/value pairs:
+
+    - 'model_class': <model class of the item type>
+    - 'css_class': <CSS class to decorate list item with>
+    - 'add_template': <name of template for adding an item of this type>
+    - 'item_add_form': <form instance>
+    """
+    L = []
+    for item_type_name in settings.ADD_ITEM_TYPE_ORDER:
+        L.append(get_item_type_info(item_type_name, form_kwargs))
+    return L
+
 
 class TopicManager(models.Manager):
 
@@ -116,6 +149,13 @@ class Item(models.Model):
         """Return the topic's absolute url with a query string and hash for this item."""
         return '{0}?i={1}#i{1}'.format(self.topic.get_absolute_url(), self.id)
 
+    def get_items_after_url(self):
+        """Return an URL that will return all of the items in the topic after this item."""
+        return reverse('iris_items_after', kwargs=dict(
+            topic_id=self.topic_id,
+            after_item_id=self.id,
+        ))
+
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)
         topic = self.topic
@@ -161,3 +201,13 @@ class ParticipantJoin(models.Model):
 
     def __unicode__(self):
         return u"{0} joined".format(self.participant)
+
+    @staticmethod
+    def item_add_form_class():
+        # circular
+        from iris.forms import ParticipantJoinUser
+        return ParticipantJoinUser
+
+    @staticmethod
+    def item_type_label():
+        return u'participant'
