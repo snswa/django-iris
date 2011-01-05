@@ -1,14 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from iris.conf import settings
 from iris.forms import TopicForm
-from iris.models import Topic
+from iris.models import Item, Topic
 
 
 # --- TOPICS ---
@@ -86,13 +86,16 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
         form = form_class(request.POST)
         if form.is_valid():
             item = form.save(request, topic)
-            if item:
-                return redirect(item)
+            if request.is_ajax():
+                return HttpResponse('1', 'application/json')
             else:
-                # Form saved, but due to duplicate data or other circumstance,
-                # no item was generated but no error state either, so
-                # redirect to topic.
-                return redirect(topic)
+                if item:
+                    return redirect(item)
+                else:
+                    # Form saved, but due to duplicate data or other circumstance,
+                    # no item was generated but no error state either, so
+                    # redirect to topic.
+                    return redirect(topic)
     else:
         form = form_class()
     template_context = dict(
@@ -101,20 +104,26 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
         item_type_plugin=plugin,
         item_add_form=form,
     )
+    # Just return the snippet for an AJAX request.
+    if request.is_ajax():
+        template_name = plugin.add_template
+    print template_name
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
-# def items(request, topic_id, template_name="iris/items.html", extra_context=None, *args, **kwargs):
-#     extra_context = extra_context or {}
-#     template_context = dict(
-#         extra_context,
-#     )
-#     return render_to_response(template_name, template_context, RequestContext(request))
-#
-#
-# def items_after(request, topic_id, after_item_id, template_name="iris/items.html", extra_context=None, *args, **kwargs):
-#     extra_context = extra_context or {}
-#     template_context = dict(
-#         extra_context,
-#     )
-#     return render_to_response(template_name, template_context, RequestContext(request))
+def items_after(request, topic_id, after_item_id, template_name="iris/items_after.html", extra_context=None, *args, **kwargs):
+    extra_context = extra_context or {}
+    topic = get_object_or_404(Topic, pk=topic_id)
+    if not request.user.has_perm('iris.view_topic', topic):
+        raise PermissionDenied()
+    after_item = get_object_or_404(Item, pk=after_item_id, topic=topic)
+    item_list = topic.items.filter(created__gt=after_item.created)
+    template_context = dict(
+        extra_context,
+        after_item=after_item,
+        item_list=item_list,
+    )
+    if request.is_ajax():
+        bits = template_name.rsplit('.', 1)
+        template_name = bits[0] + '_ajax.' + bits[1]
+    return render_to_response(template_name, template_context, RequestContext(request))
