@@ -1,3 +1,5 @@
+from django.contrib.auth.models import AnonymousUser
+from django.db import models
 from django.template import Library
 
 from iris.models import Topic
@@ -42,6 +44,8 @@ def hasjoinedtopic(obj, topic):
             <a href="...">Leave topic</a>
         {% endif %}
     """
+    if not isinstance(obj, models.Model):
+        return False
     return topic.has_participant(obj)
 
 
