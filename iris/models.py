@@ -8,6 +8,16 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 
+class TopicManager(models.Manager):
+
+    def with_participant(self, obj):
+        content_type = ContentType.objects.get_for_model(obj)
+        return self.filter(
+            participants__content_type__pk=content_type.id,
+            participants__object_id=obj.id,
+        )
+
+
 class Topic(models.Model):
     """A topic of conversation."""
 
@@ -18,6 +28,8 @@ class Topic(models.Model):
     creator_content_type = models.ForeignKey(ContentType, blank=True, null=True)
     creator_object_id = models.PositiveIntegerField(blank=True, null=True)
     creator = generic.GenericForeignKey("creator_content_type", "creator_object_id")
+
+    objects = TopicManager()
 
     class Meta:
         ordering = ('modified', )

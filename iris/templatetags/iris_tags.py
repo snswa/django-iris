@@ -1,5 +1,7 @@
 from django.template import Library
 
+from iris.models import Topic
+
 
 register = Library()
 
@@ -31,8 +33,8 @@ def canjointopic(user, topic):
 
 
 @register.filter
-def hasjoinedtopic(user, topic):
-    """Return True if the user participates in the topic.
+def hasjoinedtopic(obj, topic):
+    """Return True if the object participates in the topic.
 
     Example::
 
@@ -40,4 +42,17 @@ def hasjoinedtopic(user, topic):
             <a href="...">Leave topic</a>
         {% endif %}
     """
-    return topic.has_participant(user)
+    return topic.has_participant(obj)
+
+
+@register.filter
+def topicsjoined(obj):
+    """Return a queryset containing Topic instances that obj participates in.
+
+    Example::
+
+        {% for topic in user|topicsjoined %}
+            <li>{{ topic.subject }}</li>
+        {% endfor %}
+    """
+    return Topic.objects.with_participant(obj)

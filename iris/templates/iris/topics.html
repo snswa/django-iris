@@ -11,8 +11,6 @@
 
     {% if perms.iris.add_topic %}
 
-        <h2>{% trans "Create topic" %}</h1>
-
         <form action="{% url iris_topic_create %}" method="post" accept-charset="utf-8">
             {% csrf_token %}
             <table>
@@ -21,6 +19,25 @@
             <p><input type="submit" value="{% trans 'Create' %} &rarr;"></p>
         </form>
 
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        {% with user|topicsjoined as topic_list %}
+            {% if topic_list %}
+                <h2>{% trans "Your topics" %}</h2>
+
+                <ul>
+                    {% for topic in topic_list.reverse %}
+                        <li>
+                            <a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a>
+                            {% blocktrans with topic.modified|timesince as modified %}
+                                ({{ modified }} ago)
+                            {% endblocktrans %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
     {% endif %}
 
     <h2>{% trans "Latest topics" %}</h2>
