@@ -35,10 +35,11 @@ class Topic(models.Model):
             slug=slugify(self.subject),
         ))
 
-    def add_participant(self, creator, content):
+    def add_participant(self, creator, obj):
+        """Add the object as a participant, returning the ParticipantJoined item created."""
         participant = Participant(
             topic=self,
-            content=content,
+            content=obj,
         )
         participant.save()
         joined = ParticipantJoined(
@@ -51,29 +52,30 @@ class Topic(models.Model):
             content=joined,
         )
         item.save()
+        return item
 
-    def get_participant(self, content):
-        """Get participation information for the given content."""
-        content_type = ContentType.objects.get_for_model(content)
+    def get_participant(self, obj):
+        """Get participation information for the given object."""
+        content_type = ContentType.objects.get_for_model(obj)
         try:
             return Participant.objects.get(
                 topic=self,
                 content_type__pk=content_type.id,
-                object_id=content.id,
+                object_id=obj.id,
             )
         except Participant.DoesNotExist:
             return None
 
-    def has_participant(self, content):
-        participant = self.get_participant(content)
+    def has_participant(self, obj):
+        participant = self.get_participant(obj)
         return participant is not None
 
-    def item_last_read_by(self, content):
-        content_type = ContentType.objects.get_for_model(content)
+    def item_last_read_by(self, obj):
+        content_type = ContentType.objects.get_for_model(obj)
         participant = Participant.objects.get(
             topic=self,
             content_type__pk=content_type.id,
-            object_id=content.id,
+            object_id=obj.id,
         )
         return participant.item_last_read
 
