@@ -33,7 +33,7 @@ class IrisTest(TestCase):
         assert topic.creator == self.alice
         topic.add_participant(
             creator=self.alice,
-            content=self.alice,
+            obj=self.alice,
         )
         #
         # - topic has one item, "alice joined"
@@ -68,13 +68,13 @@ class IrisTest(TestCase):
         topic.save()
         topic.add_participant(
             creator=self.alice,
-            content=self.alice,
+            obj=self.alice,
         )
         #
         # - alice adds bob to the topic
         topic.add_participant(
             creator=self.alice,
-            content=self.bob,
+            obj=self.bob,
         )
         # - topic has two items, latest is "alice added bob"
         #     - the item's creator was alice
