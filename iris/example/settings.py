@@ -99,4 +99,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'iris',
     'iris.example',
+    'south',
 )
