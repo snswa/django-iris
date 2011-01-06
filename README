@@ -52,6 +52,15 @@ Running example project
 From the root of your django-iris repository clone::
 
     $ iris/example/manage.py syncdb --noinput
+    $ pip install -r iris/example/requirements.txt
+
+.. note::
+
+    This will install pyquery, which in turn relies on lxml. Please visit
+    http://codespeak.net/lxml/ if you run into problems installing it.
+
+::
+
     $ iris/example/manage.py runserver
 
 Now visit URLs for users in separate browser tabs or windows to experiment.
