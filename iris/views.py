@@ -65,9 +65,18 @@ def topic_join(request, topic_id, *args, **kwargs):
     return redirect(destination)
 
 
-def topics(request, template_name="iris/topics.html", form_class=TopicForm, extra_context=None, *args, **kwargs):
+def topics(request, template_name="iris/topics.html", form_class=TopicForm, queryset=None, queryset_fn=None, extra_context=None, *args, **kwargs):
+    """Render a list of topics.
+
+    Set `queryset_fn` to a function that accepts `request` and `queryset`
+    if you would like to select topics other than the default `queryset`
+    which is all topics in last-modified order.
+    """
     extra_context = extra_context or {}
-    topic_list = Topic.objects.order_by('modified')
+    if queryset is None:
+        queryset = Topic.objects.order_by('modified')
+    if callable(queryset_fn):
+        queryset = queryset_fn(request, queryset)
     topic_create_form = form_class()
     template_context = dict(
         topic_list=topic_list,
