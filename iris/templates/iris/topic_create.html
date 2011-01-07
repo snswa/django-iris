@@ -12,10 +12,7 @@
 
     <form action="{% url iris_topic_create %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
-        <table>
-            {{ topic_create_form.as_table }}
-        </table>
-        <p><input type="submit" value="{% trans 'Create' %} &rarr;"></p>
+        {% include "iris/topic_create_form_contents.html" %}
     </form>
 
 {% endblock %}
