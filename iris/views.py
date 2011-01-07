@@ -44,7 +44,9 @@ def topic_create(request, form_class=TopicForm, post_topic_create=default_post_t
             topic.creator = request.user
             topic.save()
             post_topic_create(request, topic, *args, **kwargs)
-            return redirect(topic)
+            # attach get params
+            url = '{0}?{1}'.format(topic.get_absolute_url(), request.GET.urlencode())
+            return redirect(url)
     else:
         topic_create_form = form_class()
     template_context = dict(
@@ -62,13 +64,14 @@ def topic_join(request, topic_id, *args, **kwargs):
             raise PermissionDenied()
         if not topic.has_participant(request.user):
             destination = topic.add_participant(request.user, request.user)
-    return redirect(destination)
+    url = '{0}?{1}'.format(destination.get_absolute_url(), request.GET.urlencode())
+    return redirect(url)
 
 
 def topics(request, template_name="iris/topics.html", form_class=TopicForm, queryset=None, queryset_fn=None, extra_context=None, *args, **kwargs):
     """Render a list of topics.
 
-    Set `queryset_fn` to a function that accepts `request` and `queryset`
+    Set `queryset_fn` to a function that accepts ``request, queryset, *args, **kwargs``
     if you would like to select topics other than the default `queryset`
     which is all topics in last-modified order.
     """
@@ -76,7 +79,7 @@ def topics(request, template_name="iris/topics.html", form_class=TopicForm, quer
     if queryset is None:
         queryset = Topic.objects.order_by('modified')
     if callable(queryset_fn):
-        queryset = queryset_fn(request, queryset)
+        queryset = queryset_fn(request, queryset, *args, **kwargs)
     topic_create_form = form_class()
     template_context = dict(
         topic_list=queryset,
@@ -104,12 +107,13 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
                 return HttpResponse('1', 'application/json')
             else:
                 if item:
-                    return redirect(item)
+                    url = '{0}?{1}'.format(item.get_absolute_url(), request.GET.urlencode())
                 else:
                     # Form saved, but due to duplicate data or other circumstance,
                     # no item was generated but no error state either, so
                     # redirect to topic.
-                    return redirect(topic)
+                    url = '{0}?{1}'.format(topic.get_absolute_url(), request.GET.urlencode())
+                return redirect(url)
     else:
         form = form_class()
     template_context = dict(
