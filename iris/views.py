@@ -21,14 +21,19 @@ def topic(request, topic_id, slug=None, template_name="iris/topic.html", extra_c
         raise PermissionDenied()
     item_type_plugin_list = settings.ITEM_TYPE_PLUGINS
     template_context = dict(
-        extra_context,
         topic=topic,
         item_type_plugin_list=item_type_plugin_list,
     )
+    template_context.update(extra_context)
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
-def topic_create(request, form_class=TopicForm, template_name="iris/topic_create.html", extra_context=None, *args, **kwargs):
+def default_post_topic_create(request, topic, *args, **kwargs):
+    topic.add_participant(creator=request.user, obj=request.user)
+
+
+def topic_create(request, form_class=TopicForm, post_topic_create=default_post_topic_create,
+                 template_name="iris/topic_create.html", extra_context=None, *args, **kwargs):
     if not request.user.has_perm('iris.add_topic'):
         raise PermissionDenied()
     extra_context = extra_context or {}
@@ -38,14 +43,14 @@ def topic_create(request, form_class=TopicForm, template_name="iris/topic_create
             topic = topic_create_form.save(commit=False)
             topic.creator = request.user
             topic.save()
-            topic.add_participant(request.user, request.user)
+            post_topic_create(request, topic, *args, **kwargs)
             return redirect(topic)
     else:
         topic_create_form = form_class()
     template_context = dict(
-        extra_context,
         topic_create_form=topic_create_form,
     )
+    template_context.update(extra_context)
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
@@ -65,10 +70,10 @@ def topics(request, template_name="iris/topics.html", form_class=TopicForm, extr
     topic_list = Topic.objects.order_by('modified')
     topic_create_form = form_class()
     template_context = dict(
-        extra_context,
         topic_list=topic_list,
         topic_create_form=topic_create_form,
     )
+    template_context.update(extra_context)
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
@@ -99,15 +104,14 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
     else:
         form = form_class()
     template_context = dict(
-        extra_context,
         topic=topic,
         item_type_plugin=plugin,
         item_add_form=form,
     )
+    template_context.update(extra_context)
     # Just return the snippet for an AJAX request.
     if request.is_ajax():
         template_name = plugin.add_template
-    print template_name
     return render_to_response(template_name, template_context, RequestContext(request))
 
 
@@ -119,10 +123,10 @@ def items_after(request, topic_id, after_item_id, template_name="iris/items_afte
     after_item = get_object_or_404(Item, pk=after_item_id, topic=topic)
     item_list = topic.items.filter(created__gt=after_item.created)
     template_context = dict(
-        extra_context,
         after_item=after_item,
         item_list=item_list,
     )
+    template_context.update(extra_context)
     if request.is_ajax():
         bits = template_name.rsplit('.', 1)
         template_name = bits[0] + '_ajax.' + bits[1]
