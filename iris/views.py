@@ -78,7 +78,7 @@ def topics(request, template_name="iris/topics.html", form_class=TopicForm, extr
 def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html", extra_context=None, *args, **kwargs):
     extra_context = extra_context or {}
     topic = get_object_or_404(Topic, pk=topic_id)
-    if not topic.has_participant(request.user):
+    if not request.user.has_perm('iris.add_to_topic', topic):
         raise PermissionDenied()
     plugin = settings.ITEM_TYPE_PLUGINS_BY_NAME[plugin_name]
     form_class = plugin.form_class

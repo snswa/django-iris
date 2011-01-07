@@ -38,6 +38,7 @@ class Topic(models.Model):
         permissions = (
             ('view_topic', 'Can view topic(s).'),
             ('join_topic', 'Can participate in topic(s).'),
+            ('add_to_topic', 'Can add items to topic(s).'),
         )
 
     def __unicode__(self):

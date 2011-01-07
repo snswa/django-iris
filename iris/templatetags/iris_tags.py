@@ -9,6 +9,12 @@ register = Library()
 
 
 @register.filter
+def canaddtotopic(user, topic):
+    """Return true if the user can add items to the topic."""
+    return user.has_perm('iris.add_to_topic', obj=topic)
+
+
+@register.filter
 def canviewtopic(user, topic):
     """Return true if the user can view the topic.
 

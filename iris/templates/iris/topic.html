@@ -26,7 +26,7 @@
         {% include "iris/topic_participant_list.html" %}
     </div>
 
-    {% if user|hasjoinedtopic:topic %}
+    {% if user|canaddtotopic:topic %}
         <div id="item-add-forms">
             {% include "iris/topic_item_add_list.html" %}
         </div>
