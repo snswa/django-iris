@@ -79,7 +79,7 @@ class Topic(models.Model):
         try:
             return Participant.objects.get(
                 topic=self,
-                content_type__pk=content_type.id,
+                content_type=content_type,
                 object_id=obj.id,
             )
         except Participant.DoesNotExist:
@@ -95,10 +95,16 @@ class Topic(models.Model):
         content_type = ContentType.objects.get_for_model(obj)
         participant = Participant.objects.get(
             topic=self,
-            content_type__pk=content_type.id,
+            content_type=content_type,
             object_id=obj.id,
         )
         return participant.item_last_read
+
+    def participants_of_type(self, model_class):
+        content_type = ContentType.objects.get_for_model(model_class)
+        return self.participants.filter(
+            content_type=content_type,
+        )
 
 
 class Item(models.Model):
