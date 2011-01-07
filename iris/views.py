@@ -79,7 +79,7 @@ def topics(request, template_name="iris/topics.html", form_class=TopicForm, quer
         queryset = queryset_fn(request, queryset)
     topic_create_form = form_class()
     template_context = dict(
-        topic_list=topic_list,
+        topic_list=queryset,
         topic_create_form=topic_create_form,
     )
     template_context.update(extra_context)
