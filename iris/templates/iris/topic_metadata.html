@@ -4,13 +4,7 @@
         {% trans "Started" %}
         {{ topic.created|timesince }}
         {% trans "ago by" %}
-        {% with topic.creator.get_absolute_url as url %}
-            {% if url %}
-                <a href="{{ url }}">{{ topic.creator }}</a>
-            {% else %}
-                {{ topic.creator }}
-            {% endif %}
-        {% endwith %}
+        {% with topic.creator as content %}{% include "iris/content_link.html" %}{% endwith %}
     </li>
     <li>
         {% blocktrans with topic.modified|timesince as modified %}

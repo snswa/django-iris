@@ -1,0 +1,8 @@
+{% spaceless %}
+    {% with content.get_absolute_url as url %}
+        {% if url %}
+            <a href="{{ content.get_absolute_url }}">{{ content }}</a>
+        {% else %}
+            {{ content }}
+    {% endwith %}
+{% endspaceless %}

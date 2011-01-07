@@ -1,12 +1,6 @@
 {% load i18n %}
 <span class="author">
-    {% with item.creator.get_absolute_url as url %}
-        {% if url %}
-            <a href="{{ url }}">{{ item.creator }}</a>
-        {% else %}
-            {{ item.creator }}
-        {% endif %}
-    {% endwith %}
+    {% with item.creator as content %}{% include "iris/content_link.html" %}{% endwith %}
     {% trans "wrote" %}:
 </span>
 
