@@ -44,6 +44,10 @@ class Topic(models.Model):
     def __unicode__(self):
         return self.subject
 
+    def save(self, *args, **kwargs):
+        self.subject = self.subject.strip()
+        return super(Topic, self).save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('iris_topic_slug', kwargs=dict(
             topic_id=self.id,
