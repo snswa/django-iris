@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load iris_tags %}
 
-{% block title %}{% blocktrans with item_type_plugin.label as label %}Add {{ label }}{% endblocktrans %} - {{ topic.subject }} - {{ block.super }}{% endblock %}
+{% block title %}{% blocktrans with item_type.plugin.label as label %}Add {{ label }}{% endblocktrans %} - {{ topic.subject }} - {{ block.super }}{% endblock %}
 
 {% block body_class %}item-add {{ block.super }}{% endblock %}
 
@@ -13,7 +13,7 @@
         <a href="{{ topic.get_absolute_url }}">&larr; {{ topic.subject }}</a>
     </p>
 
-    <h1>{% trans item_type_plugin.action_label %}</h1>
+    <h1>{% trans item_type.plugin.action_label %}</h1>
 
-    {% include item_type_plugin.add_template %}
+    {% include item_type.plugin.add_template %}
 {% endblock %}

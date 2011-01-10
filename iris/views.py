@@ -19,10 +19,16 @@ def topic(request, topic_id, slug=None, template_name="iris/topic.html", extra_c
     topic = get_object_or_404(Topic, pk=topic_id)
     if not request.user.has_perm('iris.view_topic', topic):
         raise PermissionDenied()
-    item_type_plugin_list = settings.ITEM_TYPE_PLUGINS
+    item_type_list = [
+        dict(
+            plugin=plugin,
+            form=plugin.form_class(request=request, topic=topic),
+        )
+        for plugin in settings.ITEM_TYPE_PLUGINS
+    ]
     template_context = dict(
         topic=topic,
-        item_type_plugin_list=item_type_plugin_list,
+        item_type_list=item_type_list,
     )
     template_context.update(extra_context)
     return render_to_response(template_name, template_context, RequestContext(request))
@@ -118,8 +124,10 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
         form = form_class(request=request, topic=topic)
     template_context = dict(
         topic=topic,
-        item_type_plugin=plugin,
-        item_add_form=form,
+        item_type=dict(
+            plugin=plugin,
+            form=form,
+        ),
     )
     template_context.update(extra_context)
     # Just return the snippet for an AJAX request.
