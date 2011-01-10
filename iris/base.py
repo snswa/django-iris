@@ -8,6 +8,11 @@ class ItemTypePlugin(object):
     form_class = None
 
     @property
+    def action_label(self):
+        # Set this as an attribute of a subclass to turn off this behavior.
+        return u'Add a {0}'.format(self.label)
+
+    @property
     def css_class(self):
         return self.name.replace('.', '-')
 

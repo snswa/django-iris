@@ -13,11 +13,7 @@
         <a href="{{ topic.get_absolute_url }}">&larr; {{ topic.subject }}</a>
     </p>
 
-    <h1>
-        {% blocktrans with item_type_plugin.label as label %}
-            Add new {{ label }}
-        {% endblocktrans %}
-    </h1>
+    <h1>{% trans item_type_plugin.action_label %}</h1>
 
     {% include item_type_plugin.add_template %}
 {% endblock %}

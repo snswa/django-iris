@@ -3,11 +3,7 @@
     {% for item_type_plugin in item_type_plugin_list %}
         <li class="item-type {{ item_type_plugin.css_class }}">
             <div class="label">{% spaceless %}
-                <a href="{% url iris_item_add topic_id=topic.id plugin_name=item_type_plugin.name %}">
-                    {% blocktrans with item_type_plugin.label as label %}
-                        Add new {{ label }}
-                    {% endblocktrans %}
-                </a>
+                <a href="{% url iris_item_add topic_id=topic.id plugin_name=item_type_plugin.name %}">{% trans item_type_plugin.action_label %}</a>
             {% endspaceless %}</div>
             <div class="form">
                 {% with item_type_plugin.form_class as item_add_form %}
