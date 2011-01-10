@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django import forms
 
-from iris.base import ItemTypePlugin
+from iris.base import ItemTypePlugin, PluginForm
 
 
-class ParticipantAddUserForm(forms.Form):
+class ParticipantAddUserForm(PluginForm):
 
     username = forms.CharField()
 
@@ -16,11 +16,11 @@ class ParticipantAddUserForm(forms.Form):
             raise ValidationError('Could not find user by that name.')
         return username
 
-    def save(self, request, topic):
-        user = request.user
+    def save(self):
+        user = self._request.user
         other_user = User.objects.get(username=self.cleaned_data['username'])
-        if not topic.has_participant(other_user):
-            return topic.add_participant(
+        if not self._topic.has_participant(other_user):
+            return self._topic.add_participant(
                 creator=user,
                 obj=other_user,
             )

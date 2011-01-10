@@ -100,9 +100,9 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
     plugin = settings.ITEM_TYPE_PLUGINS_BY_NAME[plugin_name]
     form_class = plugin.form_class
     if request.method == 'POST':
-        form = form_class(request.POST)
+        form = form_class(request.POST, request=request, topic=topic)
         if form.is_valid():
-            item = form.save(request, topic)
+            item = form.save()
             if request.is_ajax():
                 return HttpResponse('1', 'application/json')
             else:
@@ -115,7 +115,7 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
                     url = '{0}?{1}'.format(topic.get_absolute_url(), request.GET.urlencode())
                 return redirect(url)
     else:
-        form = form_class()
+        form = form_class(request=request, topic=topic)
     template_context = dict(
         topic=topic,
         item_type_plugin=plugin,
