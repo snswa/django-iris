@@ -122,6 +122,7 @@ class Item(models.Model):
     creator = generic.GenericForeignKey("creator_content_type", "creator_object_id")
 
     class Meta:
+        get_latest_by = 'created'
         ordering = ('created',)
 
     def __unicode__(self):
