@@ -105,7 +105,11 @@ class Topic(models.Model):
         return participant.item_last_read
 
     def participants_of_type(self, model_class):
-        content_type = ContentType.objects.get_for_model(model_class)
+        if isinstance(model_class, basestring):
+            app_label, model = model_class.split('.', 1)
+            content_type = ContentType.objects.get(app_label=app_label, model=model)
+        else:
+            content_type = ContentType.objects.get_for_model(model_class)
         return self.participants.filter(
             content_type=content_type,
         )
