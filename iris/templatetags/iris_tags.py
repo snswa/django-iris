@@ -56,6 +56,20 @@ def hasjoinedtopic(obj, topic):
 
 
 @register.filter
+def participantsoftype(obj, content_type_name):
+    """Return a list of participant objects for a team where
+    the content object is of a certain type.
+
+    Example::
+
+        {% for participant in topic|participantsoftype:"teams.team" %}
+            <li>{{ participant.content }} team</li>
+        {% endfor %}
+    """
+    return obj.participants_of_type(content_type_name)
+
+
+@register.filter
 def topicsjoined(obj):
     """Return a queryset containing Topic instances that obj participates in.
 
