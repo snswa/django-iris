@@ -1,14 +1,19 @@
 {% load i18n %}
 <ul>
     <li>
-        {% trans "Started" %}
-        {{ topic.created|timesince }}
-        {% trans "ago by" %}
+        {% trans "Started by" %}
         {% with topic.creator as content %}{% include "iris/content_link.html" %}{% endwith %}
+        {{ topic.created|timesince }}
+        {% trans "ago" %}
     </li>
     <li>
-        {% blocktrans with topic.modified|timesince as modified %}
-            Last active {{ modified }} ago
-        {% endblocktrans %}
+        {% with topic.items.latest.creator as content %}
+            {% if content %}
+                {% trans "Latest by" %}
+                {% include "iris/content_link.html" %}
+                {{ topic.modified|timesince }}
+                {% trans "ago" %}
+            {% endif %}
+        {% endwith %}
     </li>
 </ul>
