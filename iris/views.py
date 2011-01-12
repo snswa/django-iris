@@ -23,6 +23,7 @@ def topic(request, topic_id, slug=None, template_name="iris/topic.html", extra_c
         dict(
             plugin=plugin,
             form=plugin.form_class(request=request, topic=topic),
+            user_has_perm=plugin.user_has_perm(request.user, topic),
         )
         for plugin in settings.ITEM_TYPE_PLUGINS
     ]
@@ -101,9 +102,11 @@ def topics(request, template_name="iris/topics.html", form_class=TopicForm, quer
 def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html", extra_context=None, *args, **kwargs):
     extra_context = extra_context or {}
     topic = get_object_or_404(Topic, pk=topic_id)
+    plugin = settings.ITEM_TYPE_PLUGINS_BY_NAME[plugin_name]
     if not request.user.has_perm('iris.add_to_topic', topic):
         raise PermissionDenied()
-    plugin = settings.ITEM_TYPE_PLUGINS_BY_NAME[plugin_name]
+    if not plugin.user_has_perm(request.user, topic):
+        raise PermissionDenied()
     form_class = plugin.form_class
     if request.method == 'POST':
         form = form_class(request.POST, request=request, topic=topic)
@@ -127,6 +130,7 @@ def item_add(request, topic_id, plugin_name, template_name="iris/item_add.html",
         item_type=dict(
             plugin=plugin,
             form=form,
+            user_has_perm=plugin.user_has_perm(request.user, topic),
         ),
     )
     template_context.update(extra_context)

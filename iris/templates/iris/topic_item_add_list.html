@@ -1,13 +1,15 @@
 {% load i18n %}
 <ul>
     {% for item_type in item_type_list %}
-        <li class="item-type {{ item_type.plugin.css_class }}">
-            <div class="label">{% spaceless %}
-                <a href="{% url iris_item_add topic_id=topic.id plugin_name=item_type.plugin.name %}">{% trans item_type.plugin.action_label %}</a>
-            {% endspaceless %}</div>
-            <div class="form">
-                {% include item_type.plugin.add_template %}
-            </div>
-        </li>
+        {% if item_type.user_has_perm %}
+            <li class="item-type {{ item_type.plugin.css_class }}">
+                <div class="label">{% spaceless %}
+                    <a href="{% url iris_item_add topic_id=topic.id plugin_name=item_type.plugin.name %}">{% trans item_type.plugin.action_label %}</a>
+                {% endspaceless %}</div>
+                <div class="form">
+                    {% include item_type.plugin.add_template %}
+                </div>
+            </li>
+        {% endif %}
     {% endfor %}
 </ul>

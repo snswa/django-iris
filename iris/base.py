@@ -20,6 +20,16 @@ class ItemTypePlugin(object):
     def add_template(self):
         return 'iris/items/{0}.html'.format(self.name)
 
+    def user_has_perm(self, topic, user):
+        """Returns whether or not a user has a named permission for a topic.
+
+        By default, plugins are available to all users for all topics.
+
+        Override this in subclasses to prevent users from accessing certain
+        item types on a case-by-case basis.
+        """
+        return True
+
 
 class PluginForm(forms.Form):
     """Base class for Form classes used by ItemTypePlugin.
