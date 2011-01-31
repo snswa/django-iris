@@ -2,11 +2,11 @@
 {% with item.content.participant.content as participant %}
     {% if participant == item.creator %}
         {% with participant as content %}{% include "iris/content_link.html" %}{% endwith %}
-        {% trans "joined the topic" %}
+        {% trans "left the topic" %}
     {% else %}
         {% with item.creator as content %}{% include "iris/content_link.html" %}{% endwith %}
-        {% trans "added" %}
+        {% trans "removed" %}
         {% with participant as content %}{% include "iris/content_link.html" %}{% endwith %}
-        {% trans "to the topic" %}
+        {% trans "from the topic" %}
     {% endif %}
 {% endwith %}

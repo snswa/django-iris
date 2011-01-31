@@ -1,11 +1,15 @@
 {% load i18n %}
 {% load iris_tags %}
 <ul>
-    {% for participant in topic.participants.all %}
-        <li>
-            {% with participant.content as content %}{% include "iris/content_link.html" %}{% endwith %}
-        </li>
-    {% endfor %}
+    {% with topic.participants.all|activeparticipants as participants %}
+        {% for participant in participants %}
+            <li>
+                {% with participant.content as content %}{% include "iris/content_link.html" %}{% endwith %}
+            </li>
+        {% empty %}
+            <li>{% trans "No participants." %}</li>
+        {% endfor %}
+    {% endwith %}
     {% if user|canjointopic:topic and not user|hasjoinedtopic:topic %}
         <li>
             <form action="{% url iris_topic_join topic_id=topic.id %}" method="post" accept-charset="utf-8">

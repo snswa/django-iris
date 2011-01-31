@@ -9,6 +9,12 @@ register = Library()
 
 
 @register.filter
+def activeparticipants(participants_qs):
+    """Filter only active participants in a queryset of participants."""
+    return participants_qs.filter(is_active=True)
+
+
+@register.filter
 def canaddtotopic(user, topic):
     """Return true if the user can add items to the topic."""
     return user.has_perm('iris.add_to_topic', obj=topic)
@@ -56,8 +62,8 @@ def hasjoinedtopic(obj, topic):
 
 
 @register.filter
-def participantsoftype(obj, content_type_name):
-    """Return a list of participant objects for a team where
+def participantsoftype(obj, content_type_name=None):
+    """Return a list of participant objects for a topic where
     the content object is of a certain type.
 
     Example::
@@ -66,7 +72,10 @@ def participantsoftype(obj, content_type_name):
             <li>{{ participant.content }} team</li>
         {% endfor %}
     """
-    return obj.participants_of_type(content_type_name)
+    if content_type_name:
+        return obj.participants_of_type(content_type_name)
+    else:
+        return obj.participants.all
 
 
 @register.filter

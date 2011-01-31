@@ -17,6 +17,7 @@ class TopicManager(models.Manager):
         return self.filter(
             participants__content_type__pk=content_type.id,
             participants__object_id=obj.id,
+            participants__is_active=True,
         )
 
 
@@ -93,7 +94,7 @@ class Topic(models.Model):
         if not isinstance(obj, models.Model):
             return False
         participant = self.get_participant(obj)
-        return participant is not None
+        return participant is not None and participant.is_active
 
     def item_last_read_by(self, obj):
         content_type = ContentType.objects.get_for_model(obj)
@@ -110,9 +111,7 @@ class Topic(models.Model):
             content_type = ContentType.objects.get(app_label=app_label, model=model)
         else:
             content_type = ContentType.objects.get_for_model(model_class)
-        return self.participants.filter(
-            content_type=content_type,
-        )
+        return self.participants.filter(content_type=content_type)
 
 
 class Item(models.Model):
@@ -174,9 +173,12 @@ class Participant(models.Model):
     content = generic.GenericForeignKey("content_type", "object_id")
 
     item_last_read = models.ForeignKey(Item, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
-        pass
+        unique_together = (
+            ('topic', 'content_type', 'object_id'),
+        )
 
     def __unicode__(self):
         return unicode(self.content)
@@ -192,3 +194,15 @@ class ParticipantJoin(models.Model):
 
     def __unicode__(self):
         return u"{0} joined".format(self.participant)
+
+
+class ParticipantLeave(models.Model):
+    """Information about someone leaving a conversation."""
+
+    participant = models.ForeignKey('Participant', related_name='+')
+
+    class Meta:
+        pass
+
+    def __unicode__(self):
+        return u"{0} left".format(self.participant)
