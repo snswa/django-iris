@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.template import Library
 
-from iris.models import Topic
+from iris.models import Item, Topic
 
 
 register = Library()
@@ -59,6 +60,14 @@ def hasjoinedtopic(obj, topic):
     if not isinstance(obj, models.Model):
         return False
     return topic.has_participant(obj)
+
+
+@register.filter
+def itemreferencedby(obj):
+    """Return the iris.item instance that references the given object as its content."""
+    ct = ContentType.objects.get_for_model(obj)
+    item = Item.objects.get(content_type=ct, object_id=obj.id)
+    return item
 
 
 @register.filter
