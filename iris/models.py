@@ -111,7 +111,7 @@ class Topic(models.Model):
             content_type = ContentType.objects.get(app_label=app_label, model=model)
         else:
             content_type = ContentType.objects.get_for_model(model_class)
-        return self.participants.filter(content_type=content_type)
+        return self.participants.filter(content_type=content_type, is_active=True)
 
 
 class Item(models.Model):
