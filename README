@@ -31,7 +31,7 @@ Installation
 
 In a virtualenv::
 
-    $ pip install -e git+https://github.com/snswa/django-iris.git@master#egg=django-iris
+    $ pip install -e 'git+https://github.com/snswa/django-iris.git@master#egg=django-iris'
 
 From the root of your new django-iris repository clone::
 
