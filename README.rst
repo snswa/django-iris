@@ -65,7 +65,7 @@ From the root of your django-iris repository clone::
 
 Now visit URLs for users in separate browser tabs or windows to experiment.
 
-Visit http://localhost:8080/iris/ to view the anonymous user experience.
+Visit http://localhost:8000/iris/ to view the anonymous user experience.
 
 Visit http://localhost:8000/iris/?u=alice to simulate signing in as the user
 "alice".  Other users include "bob", "carla", and "doug".
